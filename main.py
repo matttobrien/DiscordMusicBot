@@ -1,7 +1,5 @@
-import os
-import discord
+import discord, music, os
 from discord.ext import commands
-import music
 from keep_alive import keep_alive
 
 cogs = [music]
