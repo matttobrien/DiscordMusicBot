@@ -27,7 +27,12 @@ class music(commands.Cog):
   
   # play music
   @commands.command()
-  async def play(self, ctx, url):
+  async def play(self, ctx, *args):
+    # join args if user entered a string instead of url
+    if len(args) > 1:
+      url = " ".join(args)
+    else:
+      url = args
     ctx.voice_client.stop()
     FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
     YDL_OPTIONS = {'format': 'bestaudio'}
@@ -43,7 +48,7 @@ class music(commands.Cog):
       # create audio stream
       source = await discord.FFmpegOpusAudio.from_probe(url2, **FFMPEG_OPTIONS)
       vc.play(source)
-      await ctx.send(f"Now playing - {info['title']} 🎶")
+      await ctx.send(f"Now playing: {info['title']} 🎶")
 
   # stop music
   @commands.command()
