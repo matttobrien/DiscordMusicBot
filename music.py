@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-import youtube_dl
+import yt_dlp
 from requests import get
 
 class music(commands.Cog):
@@ -10,9 +10,6 @@ class music(commands.Cog):
   # join voice channel
   @commands.command()
   async def join(self, ctx):
-    # if not currently in a channel
-    if ctx.author.voice is None:
-      await ctx.send("You're not in a voice channel")
     voiceChannel = ctx.author.voice.channel
     if ctx.voice_client is None:
       await voiceChannel.connect()
@@ -35,16 +32,16 @@ class music(commands.Cog):
       url = args
     ctx.voice_client.stop()
     FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
-    YDL_OPTIONS = {'format': 'bestaudio'}
+    YDL_OPTIONS = {'format': 'bestaudio/best'}
     vc = ctx.voice_client
-    with youtube_dl.YoutubeDL(YDL_OPTIONS) as ydl:
+    with yt_dlp.YoutubeDL(YDL_OPTIONS) as ydl:
       try:
         get(url) 
       except:
         info = ydl.extract_info(f"ytsearch:{url}", download=False)['entries'][0]
       else:
         info = ydl.extract_info(url, download=False)
-      url2 = info['formats'][0]['url']
+      url2 = info['url']
       # create audio stream
       source = await discord.FFmpegOpusAudio.from_probe(url2, **FFMPEG_OPTIONS)
       vc.play(source)
